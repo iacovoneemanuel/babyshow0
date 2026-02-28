@@ -28,7 +28,7 @@
             font-family: 'Quicksand', sans-serif;
             text-align: center;
             color: var(--text);
-            overflow: hidden;
+            overflow: hidden; /* Blocca scroll all'inizio */
         }
 
         /* --- Sfondo Bicolore Netto --- */
@@ -44,7 +44,7 @@
         .blue-side { width: 50%; background-color: var(--blue-light); }
         .pink-side { width: 50%; background-color: var(--pink-light); }
 
-        /* --- Pagina di Copertina --- */
+        /* --- Pagina di Copertina (Blocco Ingresso) --- */
         #cover {
             position: fixed;
             top: 0;
@@ -55,8 +55,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            z-index: 2000; /* Molto alto per essere sopra a tutto */
+            background: linear-gradient(90deg, var(--blue-light) 50%, var(--pink-light) 50%);
+            transition: opacity 0.6s ease;
         }
 
         .cover-balloons {
@@ -64,6 +65,7 @@
             margin-bottom: 30px;
             display: flex;
             gap: 20px;
+            pointer-events: none;
         }
 
         .balloon-pop {
@@ -94,17 +96,21 @@
             transition: 0.3s;
             max-width: 85%;
             line-height: 1.3;
+            z-index: 2001;
+            position: relative;
         }
 
-        #entry-button:hover { transform: scale(1.05); border-color: #ddd; }
+        #entry-button:active { transform: scale(0.95); }
 
         /* --- Contenuto Principale --- */
         #main-content {
             opacity: 0;
             visibility: hidden;
-            transition: opacity 1s ease 0.5s;
+            transition: opacity 1s ease;
             min-height: 100%;
             overflow-y: auto;
+            position: relative;
+            z-index: 10;
         }
 
         .container {
@@ -134,12 +140,9 @@
             cursor: pointer;
             margin-top: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: 0.3s;
             text-decoration: none;
             display: inline-block;
         }
-
-        .action-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
 
         .reveal {
             margin-top: 25px;
@@ -167,7 +170,6 @@
             display: inline-block;
             padding: 10px 20px;
             border-radius: 50px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .stork {
@@ -207,3 +209,108 @@
             <div class="card">
                 <p style="font-size: 1.1em; line-height: 1.6;">
                     Mamma <strong>Elisabetta</strong> 🤰🏻💗 <br>
+                    e papà <strong>Emanuel</strong> 👨🏻‍🍼💙 <br>
+                    ti aspettano per una dolce sorpresa!
+                </p>
+
+                <h2 style="color: #e07a5f; margin-bottom: 5px;">📅 Sabato 4 Aprile 2026</h2>
+                <p style="font-size: 1.1em; margin-top: 5px;">🕔 ore 18:00</p>
+                <p>📍 <strong>“Vecchio Frantoio”</strong> <br> Via Carrozzieri – Cagnano Varano</p>
+
+                <div class="countdown" id="countdown">Caricamento...</div>
+            </div>
+
+            <div class="card">
+                <p>
+                    Festeggiamo insieme questo momento 🤍 <br>
+                    tra sorrisi, abbracci e dolci emozioni 🥰 <br>
+                    con un <strong>aperitivo</strong> e <strong>tanti dolcetti</strong>! 🥂🍰🍭
+                </p>
+
+                <h3 style="margin-top: 25px; color: #666;">🎀 Maschietto o Femminuccia? 💙</h3>
+
+                <button class="action-btn" onclick="revealGender()">Scopriamolo insieme ✨</button>
+
+                <div class="reveal" id="result">
+                    🎊 In arrivo una dolcissima sorpresa! 🎊<br>
+                    <span style="font-size: 14px; font-weight: normal;">(Lo scopriremo solo quel giorno! 😉)</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="font-size: 40px;">📍</div>
+                <h2>Come arrivare</h2>
+                <p>Clicca sotto per le indicazioni stradali</p>
+                <a href="https://maps.app.goo.gl/NmLycxHF7qWpcWAE9?g_st=ic" target="_blank" class="action-btn">
+                    Apri Navigatore 🚗💨
+                </a>
+            </div>
+
+            <div class="card">
+                <div style="font-size: 40px;">📩</div>
+                <h2>Conferma Presenza</h2>
+                <p>Facci sapere se ci sarai entro il 20 marzo</p>
+                <button class="action-btn" onclick="window.location.href='https://wa.me/393473402769?text=Ciao!+Confermo+con+piacere+la+mia+presenza+per+il+Gender+Reveal!+✨'">
+                    Conferma su WhatsApp 💚
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function enterInvite() {
+            const btn = document.getElementById('entry-button');
+            const cover = document.getElementById('cover');
+            const main = document.getElementById('main-content');
+            
+            // 1. Animazione palloncini
+            document.getElementById('balloon-pink').classList.add('popping');
+            document.getElementById('balloon-blue').classList.add('popping');
+            btn.style.display = 'none';
+
+            // 2. Coriandoli
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#8ecbff', '#ff9ed2']
+            });
+
+            // 3. Transizione
+            setTimeout(() => {
+                cover.style.opacity = '0';
+                setTimeout(() => {
+                    cover.style.display = 'none';
+                    main.style.visibility = 'visible';
+                    main.style.opacity = '1';
+                    document.body.style.overflow = 'auto'; // Abilita scroll
+                }, 500);
+            }, 400);
+        }
+
+        const targetDate = new Date("April 4, 2026 18:00:00").getTime();
+        setInterval(function() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const countdownEl = document.getElementById("countdown");
+            if (countdownEl) {
+                countdownEl.innerHTML = diff < 0 ? "🎉 È oggi!" : `⏳ Mancano ${days}g : ${hours}h : ${minutes}m`;
+            }
+        }, 1000);
+
+        function revealGender() {
+            document.getElementById("result").style.display = "block";
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#8ecbff', '#ff9ed2']
+            });
+        }
+    </script>
+</body>
+</html>
