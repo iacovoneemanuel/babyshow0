@@ -10,343 +10,170 @@
     <meta property="og:type" content="website">
 
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" async></script>
 
     <style>
         :root {
-            --pink: #ff9ed2;
-            --blue: #8ecbff;
-            --text: #444;
+            --blue-light: #e0f2fe;
+            --pink-light: #fce7f3;
+            --blue-accent: #8ecbff;
+            --pink-accent: #ff9ed2;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
+            margin: 0; padding: 0; height: 100%;
             font-family: 'Quicksand', sans-serif;
-            text-align: center;
-            color: var(--text);
-            overflow: hidden; /* Blocca lo scorrimento all'inizio */
+            text-align: center; color: #444;
+            overflow: hidden; background-color: white;
         }
 
-        /* --- Pagina di Copertina --- */
+        /* Sfondo bicolore fisso */
+        .bg-split {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; z-index: -1;
+        }
+        .bg-blue { width: 50%; background: var(--blue-light); }
+        .bg-pink { width: 50%; background: var(--pink-light); }
+
+        /* Pagina di Copertina */
         #cover {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #ffd6ec 0%, #d6ecff 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            position: fixed; inset: 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; background: inherit;
         }
 
-        .cover-balloons {
-            font-size: 100px;
-            margin-bottom: 30px;
-            display: flex;
-            gap: 20px;
-        }
-
-        .balloon-pop {
-            display: inline-block;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .balloon-pop.pink { animation-delay: 0s; }
-        .balloon-pop.blue { animation-delay: 1.5s; }
-
-        @keyframes popOut {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.4); opacity: 0.5; }
-            100% { transform: scale(0); opacity: 0; }
-        }
-
-        .popping {
-            animation: popOut 0.5s ease-out forwards !important;
+        .cover-content {
+            background: rgba(255,255,255,0.4);
+            padding: 40px 20px; border-radius: 40px;
+            backdrop-filter: blur(5px);
         }
 
         #entry-button {
-            background: white;
-            color: #555;
-            border: 2px solid #eee;
-            padding: 18px 40px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 50px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            transition: 0.3s;
+            background: white; color: #555; border: 2px solid #ddd;
+            padding: 20px 30px; font-size: 19px; font-weight: 600;
+            cursor: pointer; border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: 0.3s; width: 280px;
         }
 
-        #entry-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-
-        /* --- Contenuto Principale --- */
+        /* Contenuto Principale */
         #main-content {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 1s ease 0.5s;
-            background: linear-gradient(135deg, #ffd6ec 0%, #d6ecff 100%);
-            background-attachment: fixed;
-            min-height: 100%;
-            overflow-y: auto; /* Riattiva lo scorrimento */
+            display: none; opacity: 0;
+            transition: opacity 0.8s ease;
+            padding: 40px 20px;
         }
 
-        .container {
-            padding: 40px 20px 80px 20px;
-            max-width: 550px;
-            margin: 0 auto;
-        }
-
-        h1 { font-size: 30px; color: #555; text-shadow: 1px 1px 2px white; margin-bottom: 5px; }
-        h2 { color: #666; font-size: 22px; margin-top: 10px; }
+        .container { max-width: 500px; margin: 0 auto; }
 
         .card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 25px;
-            margin: 20px auto;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px; margin: 20px 0; border-radius: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
         }
 
-        button {
-            background: linear-gradient(45deg, var(--pink), var(--blue));
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: 0.3s;
+        .btn {
+            background: linear-gradient(45deg, var(--blue-accent), var(--pink-accent));
+            border: none; padding: 15px 30px; border-radius: 50px;
+            color: white; font-weight: 600; text-decoration: none;
+            display: inline-block; cursor: pointer; margin-top: 10px;
         }
 
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        /* Cicogna SVG */
+        .stork-svg { width: 120px; animation: float 4s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .reveal-box {
+            display: none; margin-top: 20px; padding: 15px;
+            border: 2px dashed var(--pink-accent); border-radius: 20px;
+            font-weight: bold; animation: fadeIn 1s;
         }
-
-        .reveal {
-            margin-top: 25px;
-            font-size: 22px;
-            display: none;
-            font-weight: bold;
-            color: #555;
-            padding: 15px;
-            border: 2px dashed var(--pink);
-            border-radius: 15px;
-            animation: fadeIn 1s;
-        }
-
-        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
-
-        @keyframes float {
-            0%, 100% {transform: translateY(0);}
-            50% {transform: translateY(-15px);}
-        }
-
-        .balloon-bg {
-            position: fixed;
-            bottom: -100px;
-            font-size: 35px;
-            z-index: -1;
-            animation: rise 15s linear infinite;
-            opacity: 0.5;
-        }
-
-        @keyframes rise {
-            0% {transform: translateY(0) rotate(0deg); opacity: 0;}
-            10% {opacity: 0.5;}
-            90% {opacity: 0.5;}
-            100% {transform: translateY(-120vh) rotate(20deg); opacity: 0;}
-        }
-
-        .countdown {
-            font-size: 20px;
-            margin-top: 15px;
-            font-weight: bold;
-            color: #666;
-            background: rgba(255,255,255,0.9);
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 15px;
-            border: 1px solid #eee;
-        }
-
-        .icon-box { font-size: 40px; margin-bottom: 5px; }
-        
-        strong { color: #333; }
-        .venue-name { color: #d4a373; font-weight: bold; }
+        @keyframes fadeIn { from {opacity:0} to {opacity:1} }
     </style>
 </head>
-
 <body>
 
+    <div class="bg-split">
+        <div class="bg-blue"></div>
+        <div class="bg-pink"></div>
+    </div>
+
     <div id="cover">
-        <div class="cover-balloons">
-            <span class="balloon-pop pink" id="balloon-pink">💗</span>
-            <span class="balloon-pop blue" id="balloon-blue">💙</span>
+        <div class="cover-content">
+            <div style="font-size: 80px; margin-bottom: 20px;">💙💗</div>
+            <button id="entry-button" onclick="start()">Mamma Elisabetta e Papà Emanuel ti invitano...</button>
         </div>
-        <button id="entry-button" onclick="enterInvite()">Entra 💫</button>
     </div>
 
     <div id="main-content">
-        <div class="balloon-bg" style="left:10%; animation-delay:0s;">🎈</div>
-        <div class="balloon-bg" style="left:30%; animation-delay:4s;">☁️</div>
-        <div class="balloon-bg" style="left:50%; animation-delay:8s;">🧸</div>
-        <div class="balloon-bg" style="left:70%; animation-delay:2s;">🎈</div>
-        <div class="balloon-bg" style="left:90%; animation-delay:6s;">✨</div>
-
         <div class="container">
+            
+            <svg class="stork-svg" viewBox="0 0 100 100">
+                <path d="M20,40 Q40,20 60,40 T90,40" fill="none" stroke="white" stroke-width="3"/>
+                <circle cx="70" cy="35" r="15" fill="white"/> <path d="M70,35 L85,35" stroke="orange" stroke-width="3"/> <rect x="25" y="45" width="20" height="20" rx="5" fill="#8ecbff"/> <rect x="35" y="45" width="20" height="20" rx="5" fill="#ff9ed2" fill-opacity="0.8"/> </svg>
 
-            <div style="font-size: 50px; animation: float 3s ease-in-out infinite;">🧸</div>
-
-            <h1>Con tanto amore...</h1>
+            <h1>È in arrivo un fagottino!</h1>
 
             <div class="card">
-                <p style="font-size: 1.1em; line-height: 1.6;">
-                    Mamma <strong>Elisabetta</strong> 🤰🏻💗 <br>
-                    e papà <strong>Emanuel</strong> 👨🏻‍🍼💙 <br>
-                    ti invitano a festeggiare insieme!
-                </p>
-
-                <h2 style="color: #e07a5f;">📅 Sabato 4 Aprile 2026</h2>
-                <p>🕔 ore 18:00</p>
-                <p>📍 <span class="venue-name">“Vecchio Frantoio”</span> <br> Via Carrozzieri – Cagnano Varano</p>
-
-                <div class="countdown" id="countdown">Calcolo tempo...</div>
+                <p>Mamma <strong>Elisabetta</strong> 🤰🏻💗 & Papà <strong>Emanuel</strong> 👨🏻‍🍼💙</p>
+                <h2 style="color: #d48c70;">Sabato 4 Aprile 2026</h2>
+                <p>ore 18:00</p>
+                <p>📍 <strong>“Vecchio Frantoio”</strong><br>Cagnano Varano</p>
+                <div id="timer" style="font-weight: bold; color: #888;"></div>
             </div>
 
             <div class="card">
-                <p>
-                    Per passare un po’ di tempo assieme 🤍 <br>
-                    tra sorrisi, abbracci e dolci emozioni 🥰 <br>
-                    gustando un delizioso aperitivo 🥂🍹
-                </p>
-
-                <h2 style="margin-top: 25px;">🎀 Maschietto o Femminuccia? 💙</h2>
-
-                <button onclick="revealGender()">Scopriamolo insieme ✨</button>
-
-                <div class="reveal" id="result">
-                    🎊 In arrivo una dolcissima sorpresa! 🎊<br>
-                    <span style="font-size: 14px; font-weight: normal;">(Lo scopriremo solo quel giorno! 😉)</span>
+                <p>Ti aspettiamo per un <strong>aperitivo</strong> e tanti <strong>dolcetti</strong>! 🥂🍰</p>
+                <h3>Maschietto o Femminuccia?</h3>
+                <button class="btn" onclick="reveal()">Scopriamolo insieme ✨</button>
+                <div id="result" class="reveal-box">
+                    🎊 Una dolcissima sorpresa ci aspetta! 🎊<br>
+                    <small>(Lo scopriremo solo quel giorno! 😉)</small>
                 </div>
             </div>
 
             <div class="card">
-                <div class="icon-box">📍</div>
-                <h2>Come arrivare</h2>
-                <p>Clicca qui sotto per le indicazioni stradali</p>
-                <button onclick="window.open('https://maps.app.goo.gl/6CqpTyu134BiChAEA?g_st=ic')">
-                    Apri Navigatore 🚗💨
-                </button>
+                <h3>Dove trovarci</h3>
+                <a href="https://maps.app.goo.gl/NmLycxHF7qWpcWAE9?g_st=ic" target="_blank" class="btn">Apri Navigatore 🚗</a>
             </div>
 
             <div class="card">
-                <div class="icon-box">📩</div>
-                <h2>Conferma Presenza</h2>
-                <p>Facci sapere se ci sarai entro il 20 marzo</p>
-                <button onclick="window.location.href='https://wa.me/393473402769?text=Ciao!+Confermo+con+piacere+la+mia+presenza+per+il+Gender+Reveal!+✨'">
-                    Conferma su WhatsApp 💚
-                </button>
+                <h3>Conferma Presenza</h3>
+                <p>Entro il 20 Marzo</p>
+                <a href="https://wa.me/393473402769?text=Ciao!+Confermo+la+presenza!" class="btn" style="background: #25D366;">WhatsApp 💚</a>
             </div>
-
         </div>
     </div>
 
     <script>
-        // Funzione per entrare nell'invito con effetto scoppio
-        function enterInvite() {
-            document.getElementById('balloon-pink').classList.add('popping');
-            document.getElementById('balloon-blue').classList.add('popping');
-            document.getElementById('entry-button').style.display = 'none';
+        function start() {
+            // Nascondi cover e mostra contenuto subito
+            document.getElementById('cover').style.display = 'none';
+            const main = document.getElementById('main-content');
+            main.style.display = 'block';
+            setTimeout(() => { main.style.opacity = '1'; }, 10);
+            document.body.style.overflow = 'auto';
 
-            confetti({
-                particleCount: 150,
-                spread: 100,
-                origin: { y: 0.6 },
-                colors: ['#ff9ed2', '#8ecbff']
-            });
-
-            setTimeout(() => {
-                document.getElementById('cover').style.opacity = '0';
-                document.getElementById('cover').style.visibility = 'hidden';
-                
-                const mainContent = document.getElementById('main-content');
-                mainContent.style.opacity = '1';
-                mainContent.style.visibility = 'visible';
-                
-                document.body.style.overflow = 'auto';
-            }, 600);
+            // Lancia coriandoli se la libreria è pronta
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#8ecbff', '#ff9ed2'] });
+            }
         }
 
-        // Countdown
-        const targetDate = new Date("April 4, 2026 18:00:00").getTime();
+        function reveal() {
+            document.getElementById('result').style.display = 'block';
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 100, spread: 70, colors: ['#8ecbff', '#ff9ed2'] });
+            }
+        }
 
-        setInterval(function() {
+        // Timer
+        const target = new Date("April 4, 2026 18:00:00").getTime();
+        setInterval(() => {
             const now = new Date().getTime();
-            const diff = targetDate - now;
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-            const countdownEl = document.getElementById("countdown");
-            if (countdownEl) {
-                countdownEl.innerHTML = `⏳ Mancano ${days}g : ${hours}h : ${minutes}m`;
-            }
-
-            if (diff < 0) {
-                clearInterval(this);
-                if (countdownEl) {
-                    countdownEl.innerHTML = "🎉 È oggi il grande giorno!";
-                }
-            }
+            const d = target - now;
+            const days = Math.floor(d / (1000 * 60 * 60 * 24));
+            document.getElementById("timer").innerHTML = d > 0 ? "⏳ Mancano " + days + " giorni!" : "🎉 È oggi!";
         }, 1000);
-
-        // Effetto coriandoli misti del tasto interno
-        function revealGender() {
-            const resultDiv = document.getElementById("result");
-            resultDiv.style.display = "block";
-            
-            const duration = 4 * 1000;
-            const end = Date.now() + duration;
-
-            (function frame() {
-                confetti({
-                    particleCount: 4,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: ['#ff9ed2', '#8ecbff']
-                });
-                confetti({
-                    particleCount: 4,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
-                    colors: ['#ff9ed2', '#8ecbff']
-                });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
-        }
     </script>
-
 </body>
 </html>
